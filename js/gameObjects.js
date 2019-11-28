@@ -1,3 +1,6 @@
+const g = -9.8;
+
+
 class GameObject {
     constructor(params = {}, children = []) {
         this.posX = 0;
@@ -66,9 +69,31 @@ class TestBox extends GameObject {
     }
 }
 
-class Player extends GameObject {
+
+class PhysicsObject extends GameObject {
+    constructor(params = {}) {
+        super(params);
+        this.velX = 0;
+        this.velY = 0;
+        this.mass = 1;
+
+    }
+
+    calculatePhysics() {
+        this.velY = g * deltaTime;
+    }
+
+    updatePosition() {
+        this.posX += this.velX;
+        this.posY += this.velY;
+    }
+}
+
+class Player extends PhysicsObject {
     constructor(params = {}, children = []) {
         super(params, children)
+        this.posX = 0;
+        this.posY = 0;
         this.velX = 0;
         this.velY = 0;
         this.friction = 1.2;
@@ -76,19 +101,19 @@ class Player extends GameObject {
     }
 
     logic() {
-        if (keys.KeyW == "held") this.velY--;
-        if (keys.KeyA == "held") this.velX--;
-        if (keys.KeyS == "held") this.velY++;
-        if (keys.KeyD == "held") this.velX++;
+        if (keys.KeyW.held) this.velY--;
+        if (keys.KeyA.held) this.velX--;
+        if (keys.KeyS.held) this.velY++;
+        if (keys.KeyD.held) this.velX++;
 
-        this.velX /= this.friction;
-        this.velY /= this.friction;
 
-        this.posX += this.velX;
-        this.posY += this.velY;
+        this.calculatePhysics()
+
+        this.updatePosition();
     }
 
     draw() {
         fillRect(this.posX, this.posY, this.scaleX * 2, this.scaleX * 2, this.color)
     }
 }
+

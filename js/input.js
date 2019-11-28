@@ -1,13 +1,31 @@
+class Key {
+    constructor() {
+        this.pressed = false;
+        this.held = false;
+    }
+}
 
-
-var keys = {}
+var keys = {
+    KeyW: new Key(),
+    KeyA: new Key(),
+    KeyS: new Key(),
+    KeyD: new Key()
+}
 
 document.addEventListener("keydown", (e) => {
-    if (keys[e.code] !== "pressed" && keys[e.code] !== "held") keys[e.code] = "pressed"
+    let key = keys[e.code];
+    if (!key.held) key.pressed = true;
+    key.held = true;
 });
 
-document.addEventListener("keyup", (e) => keys[e.code] = "released");
+document.addEventListener("keyup", (e) => {
+    let key = keys[e.code];
+    key.held = false
+});
 
 updateInput = () => {
-    for (let key in keys) if (keys[key] == "pressed") keys[key] = "held"
+    for (let i in keys) {
+        if (keys[i].pressed) keys[i].pressed = false;
+    }
 }
+

@@ -6,17 +6,25 @@ let settings = {
 }
 
 let activeScene = scenes.game;
-let time = 0;
 
 window.onload = () => {
-
     ctx.translate(canvas.width / 2, canvas.height / 2);
-    loop();
+    loop(Date.now());
 }
 
-loop = () => {
+let deltaTime = 0;
+let previousTime = 0;
+
+loop = (time) => {
     requestAnimationFrame(loop);
-    time++
+
+    if (previousTime == 0) previousTime = time - 1;
+    deltaTime = ((time - previousTime) * .1);
+
+    previousTime = time;
+
+    // console.log(deltaTime)
+
     activeScene.update();
     activeScene.render();
     updateInput();

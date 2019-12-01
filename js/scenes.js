@@ -34,7 +34,3 @@ let scenes = {
             }),
         ])
 }
-
-for (let scene in scenes) {
-
-}

@@ -1,17 +1,12 @@
-const g = -9.8;
-
-
 class GameObject {
     constructor(params = {}, children = []) {
-        this.posX = 0;
-        this.posY = 0;
+        this.position = new Vector();
         this.zIndex = 0;
         this.hidden = false;
 
-        for (let property in params) this[property] = params[property];
-
         this.children = children;
 
+        for (let property in params) this[property] = params[property];
         for (let child of this.children) child.parent = this;
     }
 
@@ -73,8 +68,7 @@ class TestBox extends GameObject {
 class PhysicsObject extends GameObject {
     constructor(params = {}) {
         super(params);
-        this.velX = 0;
-        this.velY = 0;
+        this.velocity = new Vector();
         this.mass = 1;
 
     }
@@ -82,38 +76,68 @@ class PhysicsObject extends GameObject {
     calculatePhysics() {
         this.velY = g * deltaTime;
     }
-
-    updatePosition() {
-        this.posX += this.velX;
-        this.posY += this.velY;
-    }
 }
 
-class Player extends PhysicsObject {
+class Player extends GameObject {
     constructor(params = {}, children = []) {
         super(params, children)
-        this.posX = 0;
-        this.posY = 0;
-        this.velX = 0;
-        this.velY = 0;
-        this.friction = 1.2;
-        this.weight = 1;
+
+        this.moveDirection = new Vector()
+        this.velocity = new Vector();
+        this.friction = .2;
     }
 
     logic() {
-        if (keys.KeyW.held) this.velY--;
-        if (keys.KeyA.held) this.velX--;
-        if (keys.KeyS.held) this.velY++;
-        if (keys.KeyD.held) this.velX++;
+        this.moveDirection = new Vector()
+        if (input.up.isHeld) this.moveDirection.y--;
+        if (input.left.isHeld) this.moveDirection.x--;
+        if (input.down.isHeld) this.moveDirection.y++;
+        if (input.right.isHeld) this.moveDirection.x++;
 
 
-        this.calculatePhysics()
 
-        this.updatePosition();
+        this.velocity.add(this.moveDirection.getNormalized());
+
+        this.velocity.x /= (this.friction + 1);
+        this.velocity.y /= (this.friction + 1);
+
+
+        this.position.add(this.velocity)
+
+
+
+
+
     }
 
     draw() {
-        fillRect(this.posX, this.posY, this.scaleX * 2, this.scaleX * 2, this.color)
+        fillRect(this.position.x - this.scaleX, this.position.y - this.scaleY, this.scaleX * 2, this.scaleX * 2, this.color)
+
+        let vec1 = new Vector(50, 50)
+        let vec2 = new Vector(100, 100)
+
+        strokePath([
+            vec1,
+            vec2
+        ], "#fff")
+
+        let intersection = getIntersection([this.position, this.velocity.getNormalized().getMult(100)], [vec1, vec2]);
+
+
+
+        console.log(intersection);
+        try {
+            let intV = new Vector(intersection.x, intersection.y);
+            fillRect(intersection.x, intersection.y, 10, 10, "#fff")
+        } catch{ }
+
+
+
+        strokePath([
+            this.position,
+            this.velocity.getNormalized().getMult(100).getAdd(this.position)
+        ], "#fff")
+
     }
 }
 

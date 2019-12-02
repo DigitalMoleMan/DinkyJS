@@ -13,10 +13,16 @@ getIntersection = (v1, v2) => {
     }
     ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
     ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
-    return {
-        x: x1 + ua * (x2 - x1),
-        y: y1 + ua * (y2 - y1),
-        seg1: ua >= 0 && ua <= 1,
-        seg2: ub >= 0 && ub <= 1
-    };
+    return new Vector(
+        x1 + ua * (x2 - x1),
+        y1 + ua * (y2 - y1),
+    );
+}
+
+
+function getIntersection2(p1, p2, p3, p4) {
+    function CCW(p1, p2, p3) {
+        return (p3.y - p1.y) * (p2.x - p1.x) > (p2.y - p1.y) * (p3.x - p1.x);
+    }
+    return (CCW(p1, p3, p4) != CCW(p2, p3, p4)) && (CCW(p1, p2, p3) != CCW(p1, p2, p4));
 }

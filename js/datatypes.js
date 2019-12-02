@@ -46,6 +46,10 @@ class Vector {
         return new Vector(this.x * n, this.y * n);
     }
 
+    getDiv(n) {
+        return new Vector(this.x / n, this.y / n);
+    }
+
     getNormalized() {
         let m = this.mag()
         let normalizedVector = new Vector();

@@ -9,7 +9,7 @@ let activeScene = scenes.game;
 
 window.onload = () => {
     ctx.translate(canvas.width / 2, canvas.height / 2);
-    loop(Date.now());
+    loop(0);
 }
 
 let deltaTime = 0;
@@ -22,8 +22,6 @@ loop = (time) => {
     deltaTime = ((time - previousTime) * .1);
 
     previousTime = time;
-
-    // console.log(deltaTime)
 
     activeScene.update();
     activeScene.render();

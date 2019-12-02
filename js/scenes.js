@@ -26,11 +26,10 @@ let scenes = {
                 scaleY: canvas.height
             }),
             new Player({
-                posX: 0,
-                posY: 0,
+                position: new Vector(0, 0),
                 scaleX: 10,
                 scaleY: 10,
-                color: "#cc0"
+                color: "#fff"
             }),
         ])
 }

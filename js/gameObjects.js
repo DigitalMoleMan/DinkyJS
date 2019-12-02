@@ -64,27 +64,53 @@ class TestBox extends GameObject {
     }
 }
 
-
 class PhysicsObject extends GameObject {
-    constructor(params = {}) {
-        super(params);
-        this.velocity = new Vector();
-        this.mass = 1;
+    constructor(params, children) {
+        super(params, children);
+        this.gravity = new Vector(0, .1);
 
+        this.mass = .5;
+
+        this.velocity = new Vector();
+        this.acceleration = new Vector();
     }
 
-    calculatePhysics() {
-        this.velY = g * deltaTime;
+    applyForce(force) {
+        let f = force.getDiv(this.mass);
+        this.acceleration.add(f);
+    }
+
+    getFriction() {
+        let c = .01;
+        let normal = 1;
+        let frictionMag = c * normal;
+        return this.velocity.getMult(-1).getNormalized().getMult(frictionMag);;
+    }
+
+    updatePhysics() {
+
+
+        this.applyForce(this.getFriction())
+
+        this.applyForce(this.gravity);
+
+        this.velocity.add(this.acceleration);
+        this.position.add(this.velocity);
+
+        this.acceleration.mult(0);
     }
 }
 
-class Player extends GameObject {
+class Player extends PhysicsObject {
     constructor(params = {}, children = []) {
         super(params, children)
 
-        this.moveDirection = new Vector()
-        this.velocity = new Vector();
-        this.friction = .2;
+        this.moveSpeed = .05;
+        this.jumpHeight = 4;
+
+
+        this.moveDirection = new Vector();
+
     }
 
     logic() {
@@ -95,51 +121,57 @@ class Player extends GameObject {
         if (input.right.isHeld) this.moveDirection.x++;
 
 
-
-        this.velocity.add(this.moveDirection.getNormalized());
-
-        this.velocity.x /= (this.friction + 1);
-        this.velocity.y /= (this.friction + 1);
-
-
-        this.position.add(this.velocity)
+        this.applyForce(this.moveDirection.getNormalized().getMult(this.moveSpeed));
 
 
 
 
+        if (this.position.x > (canvas.width / 2)) {
+            this.position.x = (canvas.width / 2);
+            this.velocity.x *= 0;
+        }
+        if (this.position.x < (-(canvas.width / 2) + this.scaleX * 2)) {
+            this.velocity.x *= 0;
+            this.position.x = -(canvas.width / 2) + this.scaleX * 2;
+        }
+        if (this.position.y > (canvas.height / 2)) {
+            this.velocity.y *= 0;
+            this.position.y = (canvas.height / 2);
 
+            this.isGrounded = true;
+
+        } else this.isGrounded = false;
+
+        if (input.jump.isPressed) this.jump();
+
+        if (!input.jump.isHeld && this.velocity.y < 0) this.velocity.y /= 1.05
+
+
+        this.updatePhysics()
+    }
+
+    jump() {
+        if (this.isGrounded) this.applyForce(new Vector(0, -this.jumpHeight));
     }
 
     draw() {
         fillRect(this.position.x - this.scaleX, this.position.y - this.scaleY, this.scaleX * 2, this.scaleX * 2, this.color)
 
-        let vec1 = new Vector(50, 50)
-        let vec2 = new Vector(100, 50)
-
-        strokePath([
-            vec1,
-            vec2
-        ], "#fff")
-
-        let intersection = getIntersection([this.position, this.velocity.getNormalized().getAdd(this.position)], [vec1, vec2]);
-
-
+        drawSprite(sprites.player.bands, Math.round(this.position.x), 0, this.position.x, this.position.y - this.scaleY * 2)
 
         try {
 
-
-
-            let intV = new Vector(intersection.x, intersection.y);
-            console.log(intV.getSub(this.position).mag());
-            fillRect(intersection.x, intersection.y, 10, 10, "#fff")
+            this.fromWall = this.intersection.getSub(this.position).mag();
+            console.log(this.intersection.getSub(this.position).mag());
+            fillRect(this.intersection.x - 5, this.intersection.y - 5, 10, 10, "#fff")
         } catch{ }
 
 
 
         strokePath([
             this.position,
-            this.velocity.getNormalized().getMult(1000).getAdd(this.position)
-        ], "#fff")
+            this.velocity.getNormalized().getMult().getAdd(this.position)
+        ], "#f00")
 
     }
 }

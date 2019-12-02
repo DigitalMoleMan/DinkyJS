@@ -38,6 +38,10 @@ class Vector {
         return new Vector(this.x + v.x, this.y + v.y);
     }
 
+    getSub(v) {
+        return new Vector(this.x - v.x, this.y - v.y);
+    }
+
     getMult(n) {
         return new Vector(this.x * n, this.y * n);
     }

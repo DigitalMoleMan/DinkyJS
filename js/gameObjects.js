@@ -114,20 +114,23 @@ class Player extends GameObject {
         fillRect(this.position.x - this.scaleX, this.position.y - this.scaleY, this.scaleX * 2, this.scaleX * 2, this.color)
 
         let vec1 = new Vector(50, 50)
-        let vec2 = new Vector(100, 100)
+        let vec2 = new Vector(100, 50)
 
         strokePath([
             vec1,
             vec2
         ], "#fff")
 
-        let intersection = getIntersection([this.position, this.velocity.getNormalized().getMult(100)], [vec1, vec2]);
+        let intersection = getIntersection([this.position, this.velocity.getNormalized().getAdd(this.position)], [vec1, vec2]);
 
 
 
-        console.log(intersection);
         try {
+
+
+
             let intV = new Vector(intersection.x, intersection.y);
+            console.log(intV.getSub(this.position).mag());
             fillRect(intersection.x, intersection.y, 10, 10, "#fff")
         } catch{ }
 
@@ -135,7 +138,7 @@ class Player extends GameObject {
 
         strokePath([
             this.position,
-            this.velocity.getNormalized().getMult(100).getAdd(this.position)
+            this.velocity.getNormalized().getMult(1000).getAdd(this.position)
         ], "#fff")
 
     }

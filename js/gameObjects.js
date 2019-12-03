@@ -110,6 +110,7 @@ class Player extends PhysicsObject {
 
 
         this.moveDirection = new Vector();
+        this.collider = new Collider(this.position, this.scaleX, this.scaleX, this.scaleY, this.scaleY);
 
     }
 
@@ -157,8 +158,6 @@ class Player extends PhysicsObject {
     draw() {
         fillRect(this.position.x - this.scaleX, this.position.y - this.scaleY, this.scaleX * 2, this.scaleX * 2, this.color)
 
-        drawSprite(sprites.player.bands, Math.round(this.position.x), 0, this.position.x, this.position.y - this.scaleY * 2)
-
         try {
 
             this.fromWall = this.intersection.getSub(this.position).mag();
@@ -166,13 +165,13 @@ class Player extends PhysicsObject {
             fillRect(this.intersection.x - 5, this.intersection.y - 5, 10, 10, "#fff")
         } catch{ }
 
-
-
         strokePath([
             this.position,
             this.velocity.getNormalized().getMult().getAdd(this.position)
         ], "#f00")
 
+
+        this.collider.draw()
     }
 }
 

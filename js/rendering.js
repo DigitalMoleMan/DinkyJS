@@ -7,12 +7,40 @@ canvas.width = 920;
 canvas.height = 512;
 document.body.appendChild(canvas);
 
-fillRect = (x, y, width, height, color) => {
+/**
+ * 
+ * @param {Number} x 
+ * @param {Number} y 
+ * @param {Number} width 
+ * @param {Number} height 
+ * @param {*} color 
+ */
+function fillRect(x, y, width, height, color) {
     if (color) ctx.fillStyle = color;
     ctx.fillRect(x, y, width, height);
 }
 
-strokePath = (points = [], color) => {
+/**
+ * 
+ * @param {Number} x 
+ * @param {Number} y 
+ * @param {Number} width 
+ * @param {Number} height 
+ * @param {*} color 
+ * @param {Number} strokeWidth
+ */
+function strokeRect(x, y, width, height, color, strokeWidth) {
+    if (color) ctx.strokeStyle = color;
+    if (strokeWidth) ctx.strokeWidth = strokeWidth;
+    ctx.strokeRect(x, y, width, height);
+}
+
+/**
+ * 
+ * @param {*} points 
+ * @param {*} color 
+ */
+function strokePath(points = [], color) {
     if (color) ctx.strokeStyle = color;
     ctx.beginPath();
     ctx.moveTo(points[0].x, points[0].y);
@@ -20,7 +48,15 @@ strokePath = (points = [], color) => {
     ctx.stroke();
 }
 
-drawSprite = (spriteSheet, celX, celY, x, y) => {
+/**
+ * 
+ * @param {*} spriteSheet 
+ * @param {Number} celX 
+ * @param {Number} celY 
+ * @param {Number} x 
+ * @param {Number} y 
+ */
+function drawSprite(spriteSheet, celX, celY, x, y) {
     let s = spriteSheet;
     let sourceX = (s.celWidth * celX) % s.imgSrc.width;
     let sourceY = (s.celHeight * celY) % s.imgSrc.height;
